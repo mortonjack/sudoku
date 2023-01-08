@@ -130,23 +130,44 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
         // Ensure
         if ((selectedRow == -1 || selectedCol == -1) && selectedNum == -1) return
 
-        // Iterate through each cell
+        // Draw rectangle around col
+        canvas.drawRect(
+            selectedCol * cellSizePixels,
+            0F,
+            (selectedCol + 1) * cellSizePixels,
+            size * cellSizePixels,
+            adjacentCellPaint
+        )
+        // Draw rectangle around row
+        canvas.drawRect(
+            0F,
+            selectedRow * cellSizePixels,
+            size * cellSizePixels,
+            (selectedRow + 1) * cellSizePixels,
+            adjacentCellPaint
+        )
+        // Draw rectangle around block
+        canvas.drawRect(
+            selectedCol / sqrtSize * cellSizePixels * sqrtSize,
+            selectedRow / sqrtSize * cellSizePixels * sqrtSize,
+            (selectedCol + sqrtSize) / sqrtSize * cellSizePixels * sqrtSize,
+            (selectedRow + sqrtSize) / sqrtSize * cellSizePixels * sqrtSize,
+            adjacentCellPaint
+        )
+
+        // Paint individual cells
         for (r in 0 until size) {
             for (c in 0 until size) {
                 if (r == selectedRow && c == selectedCol) {
                     // Highlight selected cell
                     fillCell(canvas, r, c, selectedCellPaint)
-                /*} else if (TODO: HIGHLIGHT CELLS WITH SELECTED NUM) {
+                } /*else if (TODO: HIGHLIGHT CELLS WITH SELECTED NUM) {
                     // Highlight cells with selected number (real or in comments)
                     fillCell(canvas, r, c, highlightCellPaint)
                 } else if (TODO: HIGHLIGHT CONFLICTING CELLS) {
                     // Highlight conflicting cells
-                    fillCell(canvas, r, c, conflictingCellPaint)*/
-                } else if (r == selectedRow || c == selectedCol ||
-                    (r/sqrtSize == selectedRow/sqrtSize && c/sqrtSize == selectedCol/sqrtSize)) {
-                    // Highlight cells in the same row/col/block
-                    fillCell(canvas, r, c, adjacentCellPaint)
-                }
+                    fillCell(canvas, r, c, conflictingCellPaint)
+                }*/
             }
         }
     }
