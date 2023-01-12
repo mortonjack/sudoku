@@ -36,7 +36,7 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
             1 -> Color.RED
             else -> Color.BLACK
         }
-        strokeWidth = 8F
+        strokeWidth = 9F
     }
 
     // Style for thin lines
@@ -46,7 +46,7 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
             1 -> Color.RED
             else -> Color.BLACK
         }
-        strokeWidth = 2F
+        strokeWidth = 3F
     }
 
     // Selected cell paint
@@ -186,8 +186,7 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
     // Draw board grid
     private fun drawLines(canvas: Canvas) {
         // Draw outline
-        val len = width.coerceAtMost(height).toFloat()
-        canvas.drawRect(0F, 0F, len, len, thickLinePaint)
+        canvas.drawRect(0F, 0F, width.toFloat(), height.toFloat(), thickLinePaint)
 
         for (i in 1 until size) {
             // In Kotlin, 'if' and 'when' (aka 'switch') statements are expressions
@@ -199,14 +198,14 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
                 i * cellSizePixels,
                 0F,
                 i * cellSizePixels,
-                len,
+                height.toFloat(),
                 paintToUse
             )
             // Draw horizontal lines
             canvas.drawLine(
                 0F,
                 i * cellSizePixels,
-                len,
+                width.toFloat(),
                 i * cellSizePixels,
                 paintToUse
             )
