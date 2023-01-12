@@ -1,4 +1,4 @@
-package com.example.sudoku
+package com.example.sudoku.view
 
 import android.content.Context
 import android.graphics.Canvas
@@ -26,6 +26,8 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
     private var selectedCol = -1
     // Player can highlight cells containing a num
     private var selectedNum = -1
+
+    private var listener: SudokuBoardView.onTouchListener? = null
 
     /* PAINT STYLES */
 
@@ -105,25 +107,22 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         if (event == null || event.action != MotionEvent.ACTION_DOWN) return false;
 
-        // Update selected row/col
-        val newCol = (event.x/cellSizePixels).toInt()
-        val newRow = (event.y/cellSizePixels).toInt()
-        if (newRow == selectedRow && newCol == selectedCol || newCol >= size || newRow >= size) {
-            // Unselect if tapping on same cell
-            selectedRow = -1;
-            selectedCol = -1;
-        } else {
-            // Update to new cell
-            selectedRow = newRow;
-            selectedCol = newCol;
+        // Obtain row/col info
+        var newCol = (event.x/cellSizePixels).toInt()
+        var newRow = (event.y/cellSizePixels).toInt()
+
+        // Set to -1 if outside game board
+        if (newCol >= size || newRow >= size) {
+            newRow = -1;
+            newCol = -1;
         }
 
-        // Invalidate board drawing (re-draw board)
-        invalidate()
+        // Update selected row/col
+        listener?.onCellTouched(newRow, newCol)
         return true;
     }
 
-    /* FUNCTIONS */
+    /* PRIVATE FUNCTIONS */
 
     // Draw cell highlights
     private fun fillAllCells(canvas: Canvas) {
@@ -210,5 +209,21 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
                 paintToUse
             )
         }
+    }
+
+    /* PUBLIC FUNCTIONS */
+    fun updateSelectedCellUI(row: Int, col: Int) {
+        selectedRow = row
+        selectedCol = col
+        invalidate() // redraw board view
+    }
+
+    fun registerListener(listener: SudokuBoardView.onTouchListener) {
+        this.listener = listener
+    }
+
+    /* INTERFACES */
+    interface onTouchListener {
+        fun onCellTouched(row: Int, col: Int)
     }
 }

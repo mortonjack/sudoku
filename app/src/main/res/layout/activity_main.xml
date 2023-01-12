@@ -5,9 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="4dp"
-    tools:context=".MainActivity">
+    tools:context=".view.PlaySudokuActivity">
 
-    <com.example.sudoku.SudokuBoardView
+    <com.example.sudoku.view.SudokuBoardView
         android:id="@+id/sudokuBoardView"
         android:layout_width="0dp"
         android:layout_height="0dp"
