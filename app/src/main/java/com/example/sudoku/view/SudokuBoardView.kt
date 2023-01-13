@@ -212,7 +212,7 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
         if (board == null) return
 
         // Paint individual cells - Loop over board!
-        if (selectedNum in 1 until size) {
+        if (selectedNum in 1 .. size) {
             for (r in 0 until size) {
                 for (c in 0 until size) {
                     // Check if cell has same value as selected value
@@ -221,7 +221,8 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
                         || board!!.isNote(r, c, selectedNum)) {
                         // Check for conflict
                         if (r == selectedRow || c == selectedCol ||
-                            (r / 3 == selectedRow / 3 && c / 3 == selectedCol / 3)) {
+                            (r / 3 == selectedRow / 3 && c / 3 == selectedCol / 3
+                                    && selectedRow != -1 && selectedCol != -1)) {
                             // Highlight conflicting cells
                             fillCell(canvas, r, c, conflictingCellPaint)
                         }

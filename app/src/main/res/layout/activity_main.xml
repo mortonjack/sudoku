@@ -21,7 +21,7 @@
         android:id="@+id/toolsGrid"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:columnCount="3"
+        android:columnCount="4"
         android:rowCount="1"
         app:layout_constraintTop_toBottomOf="@id/sudokuBoardView"
         app:layout_constraintBottom_toBottomOf="@id/buttonsGrid"
@@ -41,6 +41,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/note" />
+
+        <Button
+            android:id="@+id/buttonFillNotes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/fill_notes" />
 
         <Button
             android:id="@+id/buttonUndo"

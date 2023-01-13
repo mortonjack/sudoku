@@ -39,6 +39,10 @@ class PlaySudokuActivity : AppCompatActivity(), SudokuBoardView.onTouchListener 
             updateNoteSetting()
         }
 
+        buttonFillNotes.setOnClickListener {
+            viewModel.sudokuGame.fillAllNotes()
+        }
+
         buttonDelete.setOnClickListener {
             viewModel.sudokuGame.updateCellNum(0)
         }

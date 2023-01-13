@@ -38,4 +38,10 @@ class SudokuGame(private val size: Int) {
         selectedCellLiveData.postValue(Pair(selectedRow, selectedCol))
     }
 
+    // Fill all possible notes
+    fun fillAllNotes() {
+        board.fillAllNotes()
+        boardLiveData.postValue(board)
+    }
+
 }
