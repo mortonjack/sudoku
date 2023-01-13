@@ -18,8 +18,18 @@ class Board(private val size: Int) {
         else grid[row][col].changeVal(num)
     }
 
+    fun isStarting(row: Int, col: Int): Boolean {
+        if (row < 0 || col < 0 || row >= size || col >= size) return false
+        return grid[row][col].starting
+    }
+
+    fun isNote(row: Int, col: Int, num: Int): Boolean {
+        if (row < 0 || col < 0 || col >= size || col >= size) return false
+        return grid[row][col].isNote(num)
+    }
+
     fun cellValue(row: Int, col: Int): Int {
-        if (row <= 0 || col <= 0 || row > size || col > size) return -1
+        if (row < 0 || col < 0 || row >= size || col >= size) return -1
         return grid[row][col].value
     }
 

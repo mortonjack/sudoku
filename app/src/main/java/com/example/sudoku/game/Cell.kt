@@ -1,6 +1,6 @@
 package com.example.sudoku.game
 
-class Cell(public val expectedValue: Int, private val size: Int, private val starting: Boolean = false) {
+class Cell(val expectedValue: Int, private val size: Int, val starting: Boolean = false) {
     // Value of cell
     var value = -1
 
@@ -9,12 +9,18 @@ class Cell(public val expectedValue: Int, private val size: Int, private val sta
 
     // Add/remove from notes
     fun flipNote(num: Int) {
-        // Return if num doesnt exist
-        if (num <= 0 || num > size) return
+        if (num <= 0 || num > size) {
+            // Clear value if num doesn't exist
+            for (i in 0 until size) notes[i] = false
+        } else {
+            // Otherwise, flip note value
+            notes[num - 1] = !notes[num - 1]
+        }
+    }
 
-        // Flip note value
-        notes[num] = !notes[num]
-        return
+    fun isNote(num: Int): Boolean {
+        if (num <= 0 || num > size) return false
+        return notes[num-1]
     }
 
     // Change value of cell

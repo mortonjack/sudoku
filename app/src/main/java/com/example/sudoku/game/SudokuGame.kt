@@ -10,6 +10,7 @@ class SudokuGame(private val size: Int) {
 
     private var selectedRow = -1
     private var selectedCol = -1
+    var note = false
     private val board = Board(size)
 
     init {
@@ -18,7 +19,7 @@ class SudokuGame(private val size: Int) {
     }
 
     // Update cell number
-    fun updateCellNum(num: Int, note: Boolean = false) {
+    fun updateCellNum(num: Int) {
         if (selectedRow == -1 || selectedCol == -1) return
         board.updateCell(selectedRow, selectedCol, num, note)
         boardLiveData.postValue(board)
@@ -26,7 +27,7 @@ class SudokuGame(private val size: Int) {
 
     // Update cell selection
     fun updateSelectedCell(row: Int, col: Int) {
-        if (selectedRow == row && selectedCol == col || row > size || col > size || row < 1 || col < 1) {
+        if (selectedRow == row && selectedCol == col || !(row in 0 until size) || !(col in 0 until size)) {
             // Deselect if tapping on current cell, or if cell doesn't exist
             selectedRow = -1
             selectedCol = -1

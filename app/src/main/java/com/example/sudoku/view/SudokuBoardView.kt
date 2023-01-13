@@ -133,7 +133,7 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
         // Update selected num
         if (board != null && selectedRow != -1 && selectedCol != -1) {
             selectedNum = board!!.cellValue(selectedRow, selectedCol)
-        } else selectedNum = -1
+        }
 
         // Draw cell highlights
         fillAllCells(canvas)
@@ -201,20 +201,25 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
         if (board == null) return
 
         // Paint individual cells - Loop over board!
-        for (r in 0 until size) {
-            for (c in 0 until size) {
-                // Check if cell has same value as selected value
-                if ((r != selectedRow || c != selectedCol) && board!!.cellValue(r, c) == selectedNum) {
-                    // Check for conflict
-                    if (r == selectedRow || c == selectedCol || (r/3 == selectedRow/3 && c/3 == selectedCol/3) ) {
-                        // Highlight conflicting cells
-                        fillCell(canvas, r, c, conflictingCellPaint)
+        if (selectedNum in 1 until size) {
+            for (r in 0 until size) {
+                for (c in 0 until size) {
+                    // Check if cell has same value as selected value
+                    if ((r != selectedRow || c != selectedCol)
+                        && board!!.cellValue(r, c) == selectedNum
+                        || board!!.isNote(r, c, selectedNum)) {
+                        // Check for conflict
+                        if (r == selectedRow || c == selectedCol ||
+                            (r / 3 == selectedRow / 3 && c / 3 == selectedCol / 3)) {
+                            // Highlight conflicting cells
+                            fillCell(canvas, r, c, conflictingCellPaint)
+                        }
+                        // Highlight non-conflicting cells with same num
+                        else fillCell(canvas, r, c, highlightCellPaint)
                     }
-                    // Highlight non-conflicting cells with same num
-                    else fillCell(canvas, r, c, highlightCellPaint)
                 }
             }
-         }
+        }
 
     }
 
@@ -264,17 +269,50 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
                 var num = board!!.cellValue(r, c)
                 if (num <= 0 || num > size) {
                     // Draw notes instead
+                    drawNotes(canvas, r, c)
                 } else {
                     // Draw num
                     val numString = num.toString()
                     val textBounds = Rect()
-                    numPaint.getTextBounds(numString, 0, numString.length, textBounds)
-                    val textWidth = numPaint.measureText(numString)
+                    val usedPaint = if (board!!.isStarting(r, c)) startPaint else numPaint
+                    usedPaint.getTextBounds(numString, 0, numString.length, textBounds)
+                    val textWidth = usedPaint.measureText(numString)
                     val textHeight = textBounds.height()
 
                     // Paint num in middle of cell
                     canvas.drawText(numString, (c*cellSizePixels) + cellSizePixels/2 - textWidth/2,
-                    (r*cellSizePixels) + cellSizePixels/2 + textHeight/2, numPaint)
+                    (r*cellSizePixels) + cellSizePixels/2 + textHeight/2, usedPaint)
+                }
+            }
+        }
+    }
+
+    private fun drawNotes(canvas: Canvas, row: Int, col: Int) {
+        val usedPaint = notePaint
+        val unit = cellSizePixels/sqrtSize
+        val x = col*cellSizePixels + cellSizePixels/2 - unit
+        val y = row*cellSizePixels + cellSizePixels/2 - unit
+        // x, y point to top left note area
+
+        for (i in 0 until sqrtSize) {
+            for (j in 0 until sqrtSize) {
+                // Get num
+                val num = i*sqrtSize + j + 1
+                if (board!!.isNote(row, col, num)) {
+                    // Draw num  - gather info
+                    val numString = num.toString()
+                    val textBounds = Rect()
+                    usedPaint.getTextBounds(numString, 0, numString.length, textBounds)
+                    val textWidth = usedPaint.measureText(numString)
+                    val textHeight = textBounds.height()
+
+                    // Paint num in middle of 1/size of cell
+                    canvas.drawText(
+                        numString,
+                        x + (j * unit) - textWidth / 2,
+                        y + (i * unit) + textHeight / 2,
+                        usedPaint
+                    )
                 }
             }
         }

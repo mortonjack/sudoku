@@ -34,6 +34,14 @@ class PlaySudokuActivity : AppCompatActivity(), SudokuBoardView.onTouchListener 
         val buttons = listOf(buttonOne, buttonTwo, buttonThree, buttonFour, buttonFive, buttonSix,
             buttonSeven, buttonEight, buttonNine)
 
+        buttonNote.setOnClickListener {
+            viewModel.sudokuGame.note = !viewModel.sudokuGame.note
+        }
+
+        buttonDelete.setOnClickListener {
+            viewModel.sudokuGame.updateCellNum(0)
+        }
+
         buttons.forEachIndexed {i, button ->
             button.setOnClickListener {
                 viewModel.sudokuGame.updateCellNum(i+1)
