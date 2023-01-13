@@ -3,14 +3,15 @@ package com.example.sudoku.game
 class Board(private val size: Int) {
     private val grid = List<List<Cell>>(size) { _ -> List<Cell>(size) { _ -> Cell(-1, size)} }
 
-    // Initialise
-    init {
-        initialiseBoard(0)
-    }
-
-    private fun initialiseBoard(difficulty: Int) {
-        // Initialise board with starting state
-        // Accepts values 0 (easy), 1 (medium), 2 (hard), 3 (extreme)
+    fun initialiseBoard(start: Array<Array<Int>>) {
+        for (r in 0 until size) {
+            for (c in 0 until size) {
+                if (start[r][c] != 0) {
+                    grid[r][c].changeVal(start[r][c])
+                    grid[r][c].starting = true
+                }
+            }
+        }
     }
 
     // Update cell value/notes
@@ -48,6 +49,11 @@ class Board(private val size: Int) {
     fun cellValue(row: Int, col: Int): Int {
         if (row < 0 || col < 0 || row >= size || col >= size) return -1
         return grid[row][col].value
+    }
+
+    // Return number of notes (caution: no input validation!)
+    fun noteCount(row: Int, col: Int): Int {
+        return grid[row][col].noteCount
     }
 
     private fun fillNotes(row: Int, col: Int) {

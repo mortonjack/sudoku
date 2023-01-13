@@ -1,20 +1,24 @@
 package com.example.sudoku.game
 
-class Cell(val expectedValue: Int, private val size: Int, val starting: Boolean = false) {
+class Cell(val expectedValue: Int, private val size: Int, var starting: Boolean = false) {
     // Value of cell
     var value = -1
 
     // Notes array
     private val notes = BooleanArray(size)
+    var noteCount = 0
 
     // Add/remove from notes
     fun flipNote(num: Int) {
         if (num <= 0 || num > size) {
             // Clear value if num doesn't exist
             for (i in 0 until size) notes[i] = false
+            noteCount = 0
         } else {
             // Otherwise, flip note value
             notes[num - 1] = !notes[num - 1]
+            if (!notes[num-1]) noteCount--
+            else noteCount++
         }
     }
 
