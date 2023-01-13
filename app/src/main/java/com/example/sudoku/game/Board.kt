@@ -16,7 +16,20 @@ class Board(private val size: Int) {
     // Update cell value/notes
     fun updateCell (row: Int, col: Int, num: Int, note: Boolean) {
         if (note) grid[row][col].flipNote(num)
-        else grid[row][col].changeVal(num)
+        else {
+            grid[row][col].changeVal(num)
+            // Remove note from row/col
+            for (i in 0 until size) {
+                if (grid[i][col].isNote(num)) grid[i][col].flipNote(num)
+                if (grid[row][i].isNote(num)) grid[row][i].flipNote(num)
+            }
+            // Remove note from block
+            for (i in 3*(row/3) until 3*((row/3)+1)) {
+                for (j in 3*(col/3) until 3*((col/3)+1)) {
+                    if (grid[i][j].isNote(num)) grid[i][j].flipNote(num)
+                }
+            }
+        }
     }
 
     // Return true if starting cell
@@ -69,7 +82,7 @@ class Board(private val size: Int) {
         for (row in 0 until size) {
             for (col in 0 until size) {
                 // Fill notes for all cells without a value
-                if (cellValue(row, col) > 0) fillNotes(row, col)
+                if (cellValue(row, col) < 1) fillNotes(row, col)
             }
         }
     }

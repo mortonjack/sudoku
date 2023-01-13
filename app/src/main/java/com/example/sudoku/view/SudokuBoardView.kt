@@ -216,9 +216,10 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
             for (r in 0 until size) {
                 for (c in 0 until size) {
                     // Check if cell has same value as selected value
+                    val cellValue = board!!.cellValue(r, c)
                     if ((r != selectedRow || c != selectedCol)
-                        && board!!.cellValue(r, c) == selectedNum
-                        || board!!.isNote(r, c, selectedNum)) {
+                        && cellValue == selectedNum
+                        || (cellValue <= 0 && board!!.isNote(r, c, selectedNum))) {
                         // Check for conflict
                         if (r == selectedRow || c == selectedCol ||
                             (r / 3 == selectedRow / 3 && c / 3 == selectedCol / 3
