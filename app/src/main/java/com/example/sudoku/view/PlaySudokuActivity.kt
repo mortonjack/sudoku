@@ -1,5 +1,6 @@
 package com.example.sudoku.view
 
+import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.lifecycle.Observer
@@ -35,7 +36,7 @@ class PlaySudokuActivity : AppCompatActivity(), SudokuBoardView.onTouchListener 
             buttonSeven, buttonEight, buttonNine)
 
         buttonNote.setOnClickListener {
-            viewModel.sudokuGame.note = !viewModel.sudokuGame.note
+            updateNoteSetting()
         }
 
         buttonDelete.setOnClickListener {
@@ -57,6 +58,15 @@ class PlaySudokuActivity : AppCompatActivity(), SudokuBoardView.onTouchListener 
 
     private fun updateBoard(board: Board?) = board?.let {
         sudokuBoardView.updateBoard(board)
+    }
+
+    private fun updateNoteSetting() {
+        viewModel.sudokuGame.note = !viewModel.sudokuGame.note
+        if (viewModel.sudokuGame.note) {
+            buttonNote.setTextColor(Color.parseColor("#f2d65c"))
+        } else {
+            buttonNote.setTextColor(Color.parseColor("#ffffff"))
+        }
     }
 
     override fun onCellTouched(row: Int, col: Int) {

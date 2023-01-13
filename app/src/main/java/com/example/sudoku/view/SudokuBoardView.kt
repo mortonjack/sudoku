@@ -20,8 +20,9 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
     private var size = 9;
     private var sqrtSize = sqrt(size.toDouble()).toInt()
 
-    // Width & height of board - for drawing
+    // These values are set in onDraw. They note the size in pixels of cells & text
     private var cellSizePixels = 0F;
+    private var textSizePixels = 0F;
 
     // Player selection
     private var selectedRow = -1
@@ -94,7 +95,7 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
         color = when (colourMode) {
             else -> Color.parseColor("#000000")
         }
-        textSize = 80F
+        textSize = 0F
     }
 
     // Filled-in number paint
@@ -103,7 +104,7 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
         color = when (colourMode) {
             else -> Color.parseColor("#0000FF")
         }
-        textSize = 80F
+        textSize = 0F
     }
 
     // Note paint
@@ -112,7 +113,7 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
         color = when (colourMode) {
             else -> Color.parseColor("#aaaaaa")
         }
-        textSize = 30F
+        textSize = 0F
     }
 
     /* FUNCTION OVERRIDES */
@@ -127,8 +128,8 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
 
     // Add functionality to draw function - draw the board
     override fun onDraw(canvas: Canvas) {
-        // Divide width of view by amount of cells
-        cellSizePixels = (width.coerceAtMost(height)/size).toFloat()
+        // Update cell size & text size measurements
+        updatePixelMeasurements(width.coerceAtMost(height))
 
         // Update selected num
         if (board != null && selectedRow != -1 && selectedCol != -1) {
@@ -162,6 +163,16 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
     }
 
     /* PRIVATE FUNCTIONS */
+
+    private fun updatePixelMeasurements(width: Int) {
+        // Update size of cell
+        cellSizePixels = (width/size).toFloat()
+        // Update text sizes
+        textSizePixels = cellSizePixels * 0.8F
+        startPaint.textSize = textSizePixels
+        numPaint.textSize = textSizePixels
+        notePaint.textSize = textSizePixels/sqrtSize
+    }
 
     // Draw cell highlights
     private fun fillAllCells(canvas: Canvas) {
