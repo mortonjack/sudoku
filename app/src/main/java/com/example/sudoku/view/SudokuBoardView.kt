@@ -4,9 +4,11 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
+import android.graphics.Rect
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
+import com.example.sudoku.game.Board
 import kotlin.math.sqrt
 
 class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(context, attributeSet) {
@@ -27,12 +29,15 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
     // Player can highlight cells containing a num
     private var selectedNum = -1
 
+    // Board
+    private var board: Board? = null
+
     private var listener: SudokuBoardView.onTouchListener? = null
 
     /* PAINT STYLES */
 
     // Style for thick lines
-    private val thickLinePaint = Paint().apply() {
+    private val thickLinePaint = Paint().apply {
         style = Paint.Style.STROKE
         color = when (colourMode) {
             1 -> Color.RED
@@ -42,7 +47,7 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
     }
 
     // Style for thin lines
-    private val thinLinePaint = Paint().apply() {
+    private val thinLinePaint = Paint().apply {
         style = Paint.Style.STROKE
         color = when (colourMode) {
             1 -> Color.RED
@@ -52,7 +57,7 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
     }
 
     // Selected cell paint
-    private val selectedCellPaint = Paint().apply() {
+    private val selectedCellPaint = Paint().apply {
         style = Paint.Style.FILL_AND_STROKE
         color = when (colourMode) {
             else -> Color.parseColor("#f9fcae")
@@ -60,7 +65,7 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
     }
 
     // Same row/col/block cell paint. Unsure on a good name here!
-    private val adjacentCellPaint = Paint().apply() {
+    private val adjacentCellPaint = Paint().apply {
         style = Paint.Style.FILL_AND_STROKE
         color = when (colourMode) {
             else -> Color.parseColor("#aedffc")
@@ -68,7 +73,7 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
     }
 
     // Highlighted cell paint
-    private val highlightCellPaint = Paint().apply() {
+    private val highlightCellPaint = Paint().apply {
         style = Paint.Style.FILL_AND_STROKE
         color = when (colourMode) {
             else -> Color.parseColor("#aefcb3")
@@ -76,11 +81,38 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
     }
 
     // Conflicting cell paint
-    private val conflictingCellPaint = Paint().apply() {
+    private val conflictingCellPaint = Paint().apply {
         style = Paint.Style.FILL_AND_STROKE
         color = when (colourMode) {
             else -> Color.parseColor("#fcb3ae")
         }
+    }
+
+    // Starting number paint
+    private val startPaint = Paint().apply {
+        style = Paint.Style.FILL_AND_STROKE
+        color = when (colourMode) {
+            else -> Color.parseColor("#000000")
+        }
+        textSize = 80F
+    }
+
+    // Filled-in number paint
+    private val numPaint = Paint().apply {
+        style = Paint.Style.FILL_AND_STROKE
+        color = when (colourMode) {
+            else -> Color.parseColor("#0000FF")
+        }
+        textSize = 80F
+    }
+
+    // Note paint
+    private val notePaint = Paint().apply {
+        style = Paint.Style.FILL_AND_STROKE
+        color = when (colourMode) {
+            else -> Color.parseColor("#aaaaaa")
+        }
+        textSize = 30F
     }
 
     /* FUNCTION OVERRIDES */
@@ -97,9 +129,16 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
     override fun onDraw(canvas: Canvas) {
         // Divide width of view by amount of cells
         cellSizePixels = (width.coerceAtMost(height)/size).toFloat()
+
+        // Update selected num
+        if (board != null && selectedRow != -1 && selectedCol != -1) {
+            selectedNum = board!!.cellValue(selectedRow, selectedCol)
+        } else selectedNum = -1
+
         // Draw cell highlights
         fillAllCells(canvas)
-        // Draw grid OVER highlights
+        // Draw grid & text OVER highlights
+        drawNums(canvas)
         drawLines(canvas)
     }
 
@@ -129,46 +168,54 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
         // Ensure
         if ((selectedRow == -1 || selectedCol == -1) && selectedNum == -1) return
 
-        // Draw rectangle around col
-        canvas.drawRect(
-            selectedCol * cellSizePixels,
-            0F,
-            (selectedCol + 1) * cellSizePixels,
-            size * cellSizePixels,
-            adjacentCellPaint
-        )
-        // Draw rectangle around row
-        canvas.drawRect(
-            0F,
-            selectedRow * cellSizePixels,
-            size * cellSizePixels,
-            (selectedRow + 1) * cellSizePixels,
-            adjacentCellPaint
-        )
-        // Draw rectangle around block
-        canvas.drawRect(
-            selectedCol / sqrtSize * cellSizePixels * sqrtSize,
-            selectedRow / sqrtSize * cellSizePixels * sqrtSize,
-            (selectedCol + sqrtSize) / sqrtSize * cellSizePixels * sqrtSize,
-            (selectedRow + sqrtSize) / sqrtSize * cellSizePixels * sqrtSize,
-            adjacentCellPaint
-        )
+        if (selectedRow != -1 && selectedCol != -1) {
+            // Draw rectangle around col
+            canvas.drawRect(
+                selectedCol * cellSizePixels,
+                0F,
+                (selectedCol + 1) * cellSizePixels,
+                size * cellSizePixels,
+                adjacentCellPaint
+            )
+            // Draw rectangle around row
+            canvas.drawRect(
+                0F,
+                selectedRow * cellSizePixels,
+                size * cellSizePixels,
+                (selectedRow + 1) * cellSizePixels,
+                adjacentCellPaint
+            )
+            // Draw rectangle around block
+            canvas.drawRect(
+                selectedCol / sqrtSize * cellSizePixels * sqrtSize,
+                selectedRow / sqrtSize * cellSizePixels * sqrtSize,
+                (selectedCol + sqrtSize) / sqrtSize * cellSizePixels * sqrtSize,
+                (selectedRow + sqrtSize) / sqrtSize * cellSizePixels * sqrtSize,
+                adjacentCellPaint
+            )
 
-        // Paint individual cells
+            // Fill selected cell
+            fillCell(canvas, selectedRow, selectedCol, selectedCellPaint)
+        }
+
+        if (board == null) return
+
+        // Paint individual cells - Loop over board!
         for (r in 0 until size) {
             for (c in 0 until size) {
-                if (r == selectedRow && c == selectedCol) {
-                    // Highlight selected cell
-                    fillCell(canvas, r, c, selectedCellPaint)
-                } /*else if (TODO: HIGHLIGHT CELLS WITH SELECTED NUM) {
-                    // Highlight cells with selected number (real or in comments)
-                    fillCell(canvas, r, c, highlightCellPaint)
-                } else if (TODO: HIGHLIGHT CONFLICTING CELLS) {
-                    // Highlight conflicting cells
-                    fillCell(canvas, r, c, conflictingCellPaint)
-                }*/
+                // Check if cell has same value as selected value
+                if ((r != selectedRow || c != selectedCol) && board!!.cellValue(r, c) == selectedNum) {
+                    // Check for conflict
+                    if (r == selectedRow || c == selectedCol || (r/3 == selectedRow/3 && c/3 == selectedCol/3) ) {
+                        // Highlight conflicting cells
+                        fillCell(canvas, r, c, conflictingCellPaint)
+                    }
+                    // Highlight non-conflicting cells with same num
+                    else fillCell(canvas, r, c, highlightCellPaint)
+                }
             }
-        }
+         }
+
     }
 
     // Highlight cell
@@ -211,7 +258,34 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
         }
     }
 
+    private fun drawNums(canvas: Canvas) {
+        for (r in 0 until size) {
+            for (c in 0 until size) {
+                var num = board!!.cellValue(r, c)
+                if (num <= 0 || num > size) {
+                    // Draw notes instead
+                } else {
+                    // Draw num
+                    val numString = num.toString()
+                    val textBounds = Rect()
+                    numPaint.getTextBounds(numString, 0, numString.length, textBounds)
+                    val textWidth = numPaint.measureText(numString)
+                    val textHeight = textBounds.height()
+
+                    // Paint num in middle of cell
+                    canvas.drawText(numString, (c*cellSizePixels) + cellSizePixels/2 - textWidth/2,
+                    (r*cellSizePixels) + cellSizePixels/2 + textHeight/2, numPaint)
+                }
+            }
+        }
+    }
+
     /* PUBLIC FUNCTIONS */
+    fun updateBoard(board: Board) {
+        this.board = board
+        invalidate()
+    }
+
     fun updateSelectedCellUI(row: Int, col: Int) {
         selectedRow = row
         selectedCol = col
