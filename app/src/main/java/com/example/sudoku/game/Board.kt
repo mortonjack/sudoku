@@ -10,8 +10,8 @@ class Board(private val size: Int) {
                     grid[r][c].changeVal(start[r][c])
                     grid[r][c].starting = true
                 } else {
-                    grid[r][c].changeVal(0)
                     grid[r][c].starting = false
+                    grid[r][c].changeVal(0)
                 }
             }
         }
