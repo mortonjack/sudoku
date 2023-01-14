@@ -15,8 +15,8 @@ class SudokuGame(private val size: Int) {
 
     init {
         selectedCellLiveData.postValue(Pair(selectedRow, selectedCol))
-        val solved = BoardSolver(3)
-        solved.makeBoard()
+        val solved = BoardCreator(3, board)
+        solved.makeBoard(1)
         boardLiveData.postValue(board)
     }
 

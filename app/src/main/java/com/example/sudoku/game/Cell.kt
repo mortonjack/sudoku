@@ -1,8 +1,9 @@
 package com.example.sudoku.game
 
-class Cell(val expectedValue: Int, private val size: Int, var starting: Boolean = false) {
+class Cell(private val size: Int, var starting: Boolean = false) {
     // Value of cell
     var value = -1
+    var expectedValue = 0
 
     // Notes array
     private val notes = BooleanArray(size)

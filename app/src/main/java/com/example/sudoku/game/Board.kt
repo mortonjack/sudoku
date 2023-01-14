@@ -1,14 +1,17 @@
 package com.example.sudoku.game
 
 class Board(private val size: Int) {
-    private val grid = List<List<Cell>>(size) { _ -> List<Cell>(size) { _ -> Cell(-1, size)} }
+    private val grid = List<List<Cell>>(size) { _ -> List<Cell>(size) { _ -> Cell(size)} }
 
-    fun initialiseBoard(start: Array<Array<Int>>) {
+    fun initialiseBoard(start: Array<Array<Int>>, removed: Array<BooleanArray>) {
         for (r in 0 until size) {
             for (c in 0 until size) {
-                if (start[r][c] != 0) {
+                if (start[r][c] != 0 && !removed[r][c]) {
                     grid[r][c].changeVal(start[r][c])
                     grid[r][c].starting = true
+                } else {
+                    grid[r][c].changeVal(0)
+                    grid[r][c].starting = false
                 }
             }
         }
@@ -93,4 +96,16 @@ class Board(private val size: Int) {
         }
     }
 
+    fun clearNotes() {
+        for (row in 0 until size) {
+            for (col in 0 until size) {
+                updateCell(row, col, 0, true)
+            }
+        }
+    }
+
+    fun setExpectedValue(row: Int, col: Int) {
+        if (row < 0 || col < 0 || row >= size || col >= size) return
+        grid[row][col].expectedValue = grid[row][col].value
+    }
 }
