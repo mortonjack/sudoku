@@ -1,15 +1,14 @@
 package com.example.sudoku.game
 
-class Board(private val sqrtSize: Int) {
-    private val size: Int = sqrtSize*sqrtSize
-    private val grid = List<List<Cell>>(size) { _ -> List<Cell>(size) { _ -> Cell(size)} }
+class Board(private val sqrtSize: Int, private val size: Int = sqrtSize*sqrtSize) {
+    private val grid = List(size) { List(size) { Cell(size)} }
 
     // Count of notes in rows/cols/blocks
-    var rowNoteCount = Array<Array<Int>>(size) {Array<Int>(size){ _ -> 0 }}
-    var colNoteCount = Array<Array<Int>>(size) {Array<Int>(size){ _ -> 0 }}
-    var blockNoteCount = Array<Array<Int>>(size) {Array<Int>(size){ _ -> 0 }}
-    var blockRowNoteCount = Array<Array<Array<Int>>>(size) {Array<Array<Int>>(sqrtSize) {Array<Int>(size){ _ -> 0 }}}
-    var blockColNoteCount = Array<Array<Array<Int>>>(size) {Array<Array<Int>>(sqrtSize) {Array<Int>(size){ _ -> 0 }}}
+    val rowNoteCount = Array(size) {Array(size){ 0 }}
+    val colNoteCount = Array(size) {Array(size){ 0 }}
+    val blockNoteCount = Array(size) {Array(size){ 0 }}
+    val blockRowNoteCount = Array(size) {Array(sqrtSize) {Array(size){ 0 }}}
+    val blockColNoteCount = Array(size) {Array(sqrtSize) {Array(size){ 0 }}}
 
     private fun updateNoteCount(row: Int, col: Int, num: Int, add: Int) {
         if (num == 0) {
@@ -73,7 +72,7 @@ class Board(private val sqrtSize: Int) {
 
     // Return true if cell contains note for num
     fun isNote(row: Int, col: Int, num: Int): Boolean {
-        if (row < 0 || col < 0 || col >= size || col >= size) return false
+        if (row < 0 || col < 0 || row >= size || col >= size) return false
         return grid[row][col].isNote(num)
     }
 
@@ -90,7 +89,7 @@ class Board(private val sqrtSize: Int) {
 
     private fun fillNotes(row: Int, col: Int) {
         // Store possible values this cell could take
-        var possible = Array<Boolean>(size) { _ -> true }
+        val possible = Array(size) { true }
 
         // Check row & col to remove possible values
         for (i in 0 until size) {

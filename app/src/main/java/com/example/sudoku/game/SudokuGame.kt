@@ -2,7 +2,7 @@ package com.example.sudoku.game
 
 import androidx.lifecycle.MutableLiveData
 
-class SudokuGame(private val sqrtSize: Int) {
+class SudokuGame(sqrtSize: Int) {
     private val size: Int = sqrtSize*sqrtSize
 
     // lifecycle-aware data holder class. Obtain selected cell info.
@@ -15,6 +15,7 @@ class SudokuGame(private val sqrtSize: Int) {
     private val board = Board(sqrtSize)
 
     init {
+        println("sudokugame init")
         selectedCellLiveData.postValue(Pair(selectedRow, selectedCol))
         val solved = BoardCreator(3, board)
         solved.makeBoard(3)

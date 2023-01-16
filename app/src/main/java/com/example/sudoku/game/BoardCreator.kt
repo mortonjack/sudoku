@@ -1,20 +1,20 @@
 package com.example.sudoku.game
 
 import kotlin.Int.Companion.MAX_VALUE
-import kotlin.math.min
 
 class BoardCreator(private val sqrtSize: Int, private val board: Board) {
     private val size: Int = sqrtSize*sqrtSize
-    private var grid = Array<Array<Int>>(size) { Array<Int>(size) { _ -> 0 } }
+    private var grid = Array(size) { Array(size) { 0 } }
 
-    private var removable = Array<BooleanArray>(size) { BooleanArray(size) { _ -> true } }
-    private var removed = Array<BooleanArray>(size) { BooleanArray(size) { _ -> false } }
+    private var removable = Array(size) { BooleanArray(size) { true } }
+    private var removed = Array(size) { BooleanArray(size) { false } }
     
     fun makeBoard(difficulty: Int) {
         // Step 1: Fill in diagonal boxes with random nums 1-9
         // 1 0 0
         // 0 1 0 <-- 1s represent boxes to fill in
         // 0 0 1
+        println("Filling in board...")
         for (box in 0 until 3) {
             val fill = (1..size).shuffled()
             var i = 0
@@ -26,6 +26,7 @@ class BoardCreator(private val sqrtSize: Int, private val board: Board) {
         }
 
         // Step 2: Create a random, valid solution to the board
+        println("Creating solution...")
         board.initialiseBoard(grid, removed)
         board.fillAllNotes()
         backtrackSolve(false)
@@ -37,6 +38,7 @@ class BoardCreator(private val sqrtSize: Int, private val board: Board) {
             }
         }
 
+        println("Removing squares...")
         // Step 3: Remove squares from grid based off difficulty
         val n = when (difficulty) {
             0 -> 42 // Easy
@@ -46,12 +48,6 @@ class BoardCreator(private val sqrtSize: Int, private val board: Board) {
             else -> 60 // Expert
         }
 
-        /*
-        There are more advanced methods of measuring difficulty
-        Maybe check this out in the future?
-        https://www.sudokuoftheday.com/difficulty
-         */
-
         if (!removeSquares(n)) {
             println("ERROR: FAILED TO REMOVE SQUARES")
             makeBoard(difficulty)
@@ -59,6 +55,7 @@ class BoardCreator(private val sqrtSize: Int, private val board: Board) {
         }
 
         // Step 4: Ready board for play
+        println("Preparing for play...")
         board.initialiseBoard(grid, removed)
         board.clearNotes()
     }
@@ -90,7 +87,7 @@ class BoardCreator(private val sqrtSize: Int, private val board: Board) {
 
 
         // Step 2: Find all values that this cell can hold
-        var nums = ArrayList<Int>()
+        val nums = ArrayList<Int>()
         for (i in 1..size) {
             if (board.isNote(row, col, i)) nums.add(i)
         }
@@ -126,7 +123,7 @@ class BoardCreator(private val sqrtSize: Int, private val board: Board) {
         if (n == 0) return true
 
         // Step 2: Create list of removable squares
-        var squares = ArrayList<Pair<Int, Int>>()
+        val squares = ArrayList<Pair<Int, Int>>()
         var count = 0
         for (r in 0 until size) {
             for (c in 0 until size) {
