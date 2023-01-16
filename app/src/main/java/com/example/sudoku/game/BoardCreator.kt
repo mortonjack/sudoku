@@ -15,7 +15,7 @@ class BoardCreator(private val sqrtSize: Int, private val board: Board) {
         // 0 1 0 <-- 1s represent boxes to fill in
         // 0 0 1
         println("Filling in board...")
-        for (box in 0 until 3) {
+        for (box in 0 until sqrtSize) {
             val fill = (1..size).shuffled()
             var i = 0
             for (r in box*sqrtSize until (box*sqrtSize)+sqrtSize) {

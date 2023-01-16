@@ -4,17 +4,16 @@ class Board(private val sqrtSize: Int, private val size: Int = sqrtSize*sqrtSize
     private val grid = List(size) { List(size) { Cell(size)} }
 
     // Count of notes in rows/cols/blocks
-    val rowNoteCount = Array(size) {Array(size){ 0 }}
-    val colNoteCount = Array(size) {Array(size){ 0 }}
-    val blockNoteCount = Array(size) {Array(size){ 0 }}
-    val blockRowNoteCount = Array(size) {Array(sqrtSize) {Array(size){ 0 }}}
-    val blockColNoteCount = Array(size) {Array(sqrtSize) {Array(size){ 0 }}}
+    val rowNoteCount = Array(size) {Array(size+1){ 0 }}
+    val colNoteCount = Array(size) {Array(size+1){ 0 }}
+    val blockNoteCount = Array(size) {Array(size+1){ 0 }}
+    val blockRowNoteCount = Array(size) {Array(sqrtSize) {Array(size+1){ 0 }}}
+    val blockColNoteCount = Array(size) {Array(sqrtSize) {Array(size+1){ 0 }}}
 
     private fun updateNoteCount(row: Int, col: Int, num: Int, add: Int) {
         if (num == 0) {
             for (i in 1..size) {
                 if (isNote(row, col, i)) updateNoteCount(row, col, i, -1)
-                else updateNoteCount(row, col, i, 1)
             }
         }
         rowNoteCount[row][num] += add
