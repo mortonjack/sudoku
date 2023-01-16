@@ -1,7 +1,30 @@
 package com.example.sudoku.game
 
-class Board(private val size: Int) {
+class Board(private val sqrtSize: Int) {
+    private val size: Int = sqrtSize*sqrtSize
     private val grid = List<List<Cell>>(size) { _ -> List<Cell>(size) { _ -> Cell(size)} }
+
+    // Count of notes in rows/cols/blocks
+    var rowNoteCount = Array<Array<Int>>(size) {Array<Int>(size){ _ -> 0 }}
+    var colNoteCount = Array<Array<Int>>(size) {Array<Int>(size){ _ -> 0 }}
+    var blockNoteCount = Array<Array<Int>>(size) {Array<Int>(size){ _ -> 0 }}
+    var blockRowNoteCount = Array<Array<Array<Int>>>(size) {Array<Array<Int>>(sqrtSize) {Array<Int>(size){ _ -> 0 }}}
+    var blockColNoteCount = Array<Array<Array<Int>>>(size) {Array<Array<Int>>(sqrtSize) {Array<Int>(size){ _ -> 0 }}}
+
+    private fun updateNoteCount(row: Int, col: Int, num: Int, add: Int) {
+        if (num == 0) {
+            for (i in 1..size) {
+                if (isNote(row, col, i)) updateNoteCount(row, col, i, -1)
+                else updateNoteCount(row, col, i, 1)
+            }
+        }
+        rowNoteCount[row][num] += add
+        colNoteCount[col][num] += add
+        val block: Int = sqrtSize*(row/sqrtSize) + col/sqrtSize
+        blockNoteCount[block][num] += add
+        blockRowNoteCount[block][row % sqrtSize][num] += add
+        blockColNoteCount[block][col % sqrtSize][num] += add
+    }
 
     fun initialiseBoard(start: Array<Array<Int>>, removed: Array<BooleanArray>) {
         for (r in 0 until size) {
@@ -19,8 +42,14 @@ class Board(private val size: Int) {
 
     // Update cell value/notes
     fun updateCell (row: Int, col: Int, num: Int, note: Boolean) {
-        if (note) grid[row][col].flipNote(num)
+        if (note) {
+            if (grid[row][col].isNote(num)) updateNoteCount(row, col, num, -1)
+            else updateNoteCount(row, col, num, 1)
+            grid[row][col].flipNote(num)
+        }
         else {
+            // Clear all notes from cell
+            updateCell(row, col, 0, true)
             grid[row][col].changeVal(num)
             // Remove note from row/col
             for (i in 0 until size) {
