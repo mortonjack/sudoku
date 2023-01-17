@@ -8,7 +8,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.sudoku.R
 import com.example.sudoku.game.Board
 import com.example.sudoku.viewmodel.PlaySudokuViewModel
-import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.sudoku_activity.*
 
 class PlaySudokuActivity : AppCompatActivity(), SudokuBoardView.onTouchListener {
 
@@ -20,7 +20,7 @@ class PlaySudokuActivity : AppCompatActivity(), SudokuBoardView.onTouchListener 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.sudoku_activity)
 
         sudokuBoardView.registerListener(this)
 
@@ -45,6 +45,10 @@ class PlaySudokuActivity : AppCompatActivity(), SudokuBoardView.onTouchListener 
 
         buttonDelete.setOnClickListener {
             viewModel.sudokuGame.updateCellNum(0)
+        }
+
+        buttonHint.setOnClickListener {
+            viewModel.sudokuGame.fillHint()
         }
 
         buttons.forEachIndexed {i, button ->

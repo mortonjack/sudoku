@@ -3,27 +3,6 @@ package com.example.sudoku.game
 class Board(private val sqrtSize: Int, private val size: Int = sqrtSize*sqrtSize) {
     private val grid = List(size) { List(size) { Cell(size)} }
 
-    // Count of notes in rows/cols/blocks
-    val rowNoteCount = Array(size) {Array(size+1){ 0 }}
-    val colNoteCount = Array(size) {Array(size+1){ 0 }}
-    val blockNoteCount = Array(size) {Array(size+1){ 0 }}
-    val blockRowNoteCount = Array(size) {Array(sqrtSize) {Array(size+1){ 0 }}}
-    val blockColNoteCount = Array(size) {Array(sqrtSize) {Array(size+1){ 0 }}}
-
-    private fun updateNoteCount(row: Int, col: Int, num: Int, add: Int) {
-        if (num == 0) {
-            for (i in 1..size) {
-                if (isNote(row, col, i)) updateNoteCount(row, col, i, -1)
-            }
-        }
-        rowNoteCount[row][num] += add
-        colNoteCount[col][num] += add
-        val block: Int = sqrtSize*(row/sqrtSize) + col/sqrtSize
-        blockNoteCount[block][num] += add
-        blockRowNoteCount[block][row % sqrtSize][num] += add
-        blockColNoteCount[block][col % sqrtSize][num] += add
-    }
-
     fun initialiseBoard(start: Array<Array<Int>>, removed: Array<BooleanArray>) {
         for (r in 0 until size) {
             for (c in 0 until size) {
@@ -40,11 +19,7 @@ class Board(private val sqrtSize: Int, private val size: Int = sqrtSize*sqrtSize
 
     // Update cell value/notes
     fun updateCell (row: Int, col: Int, num: Int, note: Boolean) {
-        if (note) {
-            if (grid[row][col].isNote(num)) updateNoteCount(row, col, num, -1)
-            else updateNoteCount(row, col, num, 1)
-            grid[row][col].flipNote(num)
-        }
+        if (note) grid[row][col].flipNote(num)
         else {
             // Clear all notes from cell
             updateCell(row, col, 0, true)
@@ -72,6 +47,7 @@ class Board(private val sqrtSize: Int, private val size: Int = sqrtSize*sqrtSize
     // Return true if cell contains note for num
     fun isNote(row: Int, col: Int, num: Int): Boolean {
         if (row < 0 || col < 0 || row >= size || col >= size) return false
+        if (cellValue(row, col) > 0) return false
         return grid[row][col].isNote(num)
     }
 

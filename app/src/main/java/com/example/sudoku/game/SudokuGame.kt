@@ -13,12 +13,12 @@ class SudokuGame(sqrtSize: Int) {
     private var selectedCol = -1
     var note = false
     private val board = Board(sqrtSize)
+    private val boardCreator = BoardCreator(sqrtSize, board)
 
     init {
-        println("sudokugame init")
+        println("Initialising SudokuGame")
         selectedCellLiveData.postValue(Pair(selectedRow, selectedCol))
-        val solved = BoardCreator(3, board)
-        solved.makeBoard(3)
+        boardCreator.makeBoard(3)
         boardLiveData.postValue(board)
     }
 
@@ -45,6 +45,15 @@ class SudokuGame(sqrtSize: Int) {
     // Fill all possible notes
     fun fillAllNotes() {
         board.fillAllNotes()
+        boardLiveData.postValue(board)
+    }
+
+    // Fill hint
+    fun fillHint() {
+        println("Filling in hint")
+        board.clearNotes()
+        board.fillAllNotes()
+        println("Move type: ${boardCreator.humanMove(true)}")
         boardLiveData.postValue(board)
     }
 

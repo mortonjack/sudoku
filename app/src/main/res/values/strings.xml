@@ -11,6 +11,7 @@
     <string name="_9">9</string>
     <string name="note">Note</string>
     <string name="delete">Delete</string>
-    <string name="undo">undo</string>
+    <string name="undo">Undo</string>
     <string name="fill_notes">Fill Notes</string>
+    <string name="hint">Hint</string>
 </resources>
