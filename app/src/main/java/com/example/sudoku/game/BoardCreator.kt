@@ -22,11 +22,11 @@ class BoardCreator(private val sqrtSize: Int, private val board: Board) {
     }
 
     private fun blockRow(row: Int, block: Int): Int {
-        return row + 3*(block / 3)
+        return row + sqrtSize*(block / sqrtSize)
     }
 
     private fun blockCol(col: Int, block: Int): Int {
-        return col + 3*(block % 3)
+        return col + sqrtSize*(block % sqrtSize)
     }
     
     fun makeBoard(difficulty: Int) {
@@ -210,13 +210,16 @@ class BoardCreator(private val sqrtSize: Int, private val board: Board) {
         println("Attempt single candidate/position")
         if (singleCandidateOrPosition(fill)) return 1
 
-        // Candidate lines (ie one box has a number only in 1 row/col/etc)
+        // Candidate lines - A block has notes in only 1 line, notes exist elsewhere in line
         println("Attempt candidate lines")
         if (candidateLines(fill)) return 2
 
-        // Double pairs
+        // Double pairs - 2 blocks have pairs across only 2 lines, notes exist elsewhere in lines
+        println("Attempt double pairs")
+        if (doublePairs(fill)) return 3
 
         // Multiple lines
+        println("Attempt multiple lines")
 
         // Naked pair
 
@@ -316,8 +319,6 @@ class BoardCreator(private val sqrtSize: Int, private val board: Board) {
 
     // Check if any notes can be removed from candidate lines
     private fun checkCandidateLines(isRow: Boolean, index: Int, num: Int, block: Int, fill: Boolean): Boolean {
-        println("Checking candidate lines")
-        println("Block ${block+1}, ${if (isRow) "row" else "col"} ${index+1}, num $num")
         var found = false
         if (isRow) {
             val r = index + 3*(block/3)
@@ -342,6 +343,7 @@ class BoardCreator(private val sqrtSize: Int, private val board: Board) {
                 }
             }
         }
+        if (found) println("Filling candidate lines, block ${block+1}, ${if (isRow) "row" else "col"} ${index+1}, num $num")
         return found
     }
 
@@ -367,6 +369,85 @@ class BoardCreator(private val sqrtSize: Int, private val board: Board) {
                         }
                     }
                 }
+            }
+        }
+        return false
+    }
+
+    // Fill double pairs
+    private fun fillDoublePairs(block: Int, num: Int, isRow: Boolean) {
+        println("Filling doubles pairs of $num in block ${block+1} across ${if (isRow) "rows" else "cols"}")
+        if (isRow) {
+            val b = if (block % sqrtSize == 0) block+1 else block-1
+            val r = if (blockRowNoteCount[b][0][num] == 0) blockRow(0, block)
+            else if (blockRowNoteCount[b][1][num] == 0) blockRow(1, block)
+            else blockRow(2, block)
+            for (row in blockRow(0, block) .. blockRow(sqrtSize-1, block)) {
+                for (col in blockCol(0, block) .. blockCol(sqrtSize-1, block)) {
+                    if (row != r && board.isNote(row, col, num)) board.updateCell(row, col, num, true)
+                }
+            }
+        } else {
+            val b = if (block < sqrtSize) block+sqrtSize else block-sqrtSize
+            val c = if (blockColNoteCount[b][0][num] == 0) blockCol(0, block)
+            else if (blockColNoteCount[b][1][num] == 0) blockCol(1, block)
+            else blockCol(2, block)
+            for (row in blockRow(0, block) .. blockRow(sqrtSize-1, block)) {
+                for (col in blockCol(0, block) .. blockCol(sqrtSize-1, block)) {
+                    if (col != c && board.isNote(row, col, num)) board.updateCell(row, col, num, true)
+                }
+            }
+        }
+    }
+
+    // Check for double pairs
+    private fun doublePairs(fill: Boolean = false): Boolean {
+        // Check in each block
+        for (block in 0 until size) {
+            // Check each num
+            for (num in 1..size) {
+                // Check num exists in at least 2 rows/cols
+                var row = 0
+                var col = 0
+                for (i in 0 until sqrtSize) {
+                    if (blockRowNoteCount[block][row][num] != 0) row++
+                    if (blockColNoteCount[block][col][num] != 0) col++
+                }
+                // Check the other blocks in the row have pairs
+                if (row > 1) {
+                    row = -1
+                    for (i in 0 until sqrtSize) {
+                        val b = sqrtSize * (block / sqrtSize) + i
+                        if (b != block && blockNoteCount[b][num] == 2) {
+                            if (row == -1) row = b
+                            else if (blockRowNoteCount[b][0][num] == blockRowNoteCount[row][0][num]
+                                && blockRowNoteCount[b][1][num] == blockRowNoteCount[row][1][num]
+                                && blockRowNoteCount[b][2][num] == blockRowNoteCount[row][2][num]) {
+                                // Found double pairs
+                                if (fill) fillDoublePairs(block, num, true)
+                                return true
+                            }
+                        }
+                    }
+                }
+                // Check the other blocks in the col have pairs
+                if (col > 1) {
+                    col = -1
+                    for (i in 0 until sqrtSize) {
+                        val b = (block % sqrtSize) + (sqrtSize*i)
+                        if (b != block && blockNoteCount[b][num] == 2) {
+                            if (col == -1) col = b
+                            else if (blockColNoteCount[b][0][num] == blockColNoteCount[col][0][num]
+                                && blockColNoteCount[b][1][num] == blockColNoteCount[col][1][num]
+                                && blockColNoteCount[b][2][num] == blockColNoteCount[col][2][num]) {
+                                // Found double pairs
+                                if (fill) fillDoublePairs(block, num, false)
+                                return true
+                            }
+                        }
+                    }
+                }
+
             }
         }
         return false
