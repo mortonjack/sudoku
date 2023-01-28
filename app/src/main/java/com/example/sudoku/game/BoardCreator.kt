@@ -65,7 +65,7 @@ class BoardCreator(private val sqrtSize: Int, private val board: Board) {
             1 -> 48 // Medium
             2 -> 52 // Hard
             3 -> 56 // Extreme
-            else -> 60 // Expert
+            else -> 58 // Expert
         }
 
         if (!removeSquares(n)) {
@@ -207,9 +207,11 @@ class BoardCreator(private val sqrtSize: Int, private val board: Board) {
         }
 
         // Single candidate or Single position
+        println("Attempt single candidate/position")
         if (singleCandidateOrPosition(fill)) return 1
 
         // Candidate lines (ie one box has a number only in 1 row/col/etc)
+        println("Attempt candidate lines")
         if (candidateLines(fill)) return 2
 
         // Double pairs
@@ -312,63 +314,56 @@ class BoardCreator(private val sqrtSize: Int, private val board: Board) {
         return false
     }
 
-    // Remove notes from candidate lines (only 2 notes in a block in the same row/col)
-    private fun fillCandidateLines(isRow: Boolean, index: Int, num: Int, block: Int) {
+    // Check if any notes can be removed from candidate lines
+    private fun checkCandidateLines(isRow: Boolean, index: Int, num: Int, block: Int, fill: Boolean): Boolean {
+        println("Checking candidate lines")
+        println("Block ${block+1}, ${if (isRow) "row" else "col"} ${index+1}, num $num")
+        var found = false
         if (isRow) {
+            val r = index + 3*(block/3)
             for (c in 0 until size) {
-                if (board.isNote(index, c, num)) {
+                if (board.isNote(r, c, num)) {
                     // Remove note if not in block
-                    if (getBlock(index, c) != block) {
-                        board.updateCell(index, c, num, true)
+                    if (getBlock(r, c) != block) {
+                        if (fill) board.updateCell(r, c, num, true)
+                        found = true
                     }
                 }
             }
         } else {
+            val c = index + 3*(block % 3)
             for (r in 0 until size) {
-                if (board.isNote(r, index, num)) {
+                if (board.isNote(r, c, num)) {
                     // Remove note if not in block
-                    if (getBlock(r, index) != block) {
-                        board.updateCell(r, index, num, true)
+                    if (getBlock(r, c) != block) {
+                        if (fill) board.updateCell(r, c, num, true)
+                        found = true
                     }
                 }
             }
         }
+        return found
     }
 
     // Check for candidate lines
     private fun candidateLines(fill: Boolean = false): Boolean {
-        // Ugly function, prime for refactoring
-
         // Iterate over every block
         for (block in 0 until size) {
             // Iterate over every number per block
             for (i in 1 ..size) {
-                // If there are only 2 of this number in this block
-                if (blockNoteCount[block][i] == 2) {
-                    var seenRow = -1
-                    var seenCol = -1
-                    // Iterate over every cell in the block
-                    for (j in 0 until 3) {
-                        for (k in 0 until 3) {
-                            val r = blockRow(j, block)
-                            val c = blockCol(k, block)
-                            // If number is found
-                            if (board.cellValue(r, c) == i) {
-                                if (seenRow == -1) {
-                                    seenRow = r
-                                    seenCol = c
-                                } else {
-                                    // Return true if same row/col with deletion candidates
-                                    if (seenRow == r && rowNoteCount[r][i] > 2) {
-                                        if (fill) fillCandidateLines(true, r, i, block)
-                                        return true
-                                    }
-                                    if (seenCol == c && colNoteCount[c][i] > 2) {
-                                        if (fill) fillCandidateLines(true, c, i, block)
-                                        return true
-                                    }
-                                }
-                            }
+                // Check if there could be candidate lines in this block
+                if (blockNoteCount[block][i] in 2..sqrtSize) {
+                    // Iterate over every row/col in this block
+                    for (j in 0 until sqrtSize) {
+                        // Check if row has all notes
+                        if (blockRowNoteCount[block][j][i] == blockNoteCount[block][i]) {
+                            if (checkCandidateLines(true, j, i, block, fill)) return true
+                            else break
+                        }
+                        // Check if col has all notes
+                        if (blockColNoteCount[block][j][i] == blockNoteCount[block][i]) {
+                            if (checkCandidateLines(false, j, i, block, fill)) return true
+                            else break
                         }
                     }
                 }

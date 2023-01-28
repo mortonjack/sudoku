@@ -18,7 +18,7 @@ class SudokuGame(sqrtSize: Int) {
     init {
         println("Initialising SudokuGame")
         selectedCellLiveData.postValue(Pair(selectedRow, selectedCol))
-        boardCreator.makeBoard(3)
+        boardCreator.makeBoard(4)
         boardLiveData.postValue(board)
     }
 
@@ -51,8 +51,6 @@ class SudokuGame(sqrtSize: Int) {
     // Fill hint
     fun fillHint() {
         println("Filling in hint")
-        board.clearNotes()
-        board.fillAllNotes()
         println("Move type: ${boardCreator.humanMove(true)}")
         boardLiveData.postValue(board)
     }
