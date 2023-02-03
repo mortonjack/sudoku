@@ -125,7 +125,7 @@ class BoardCreator(private val sqrtSize: Int, private val board: Board) {
             if (sols == 1 && !limit) return 1
 
             // Reset board value
-            board.updateCell(row, col, it, false)
+            board.updateCell(row, col, 0, false)
             board.clearMoveStack()
 
             if (sols > 1) return sols
