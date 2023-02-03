@@ -47,6 +47,10 @@ class PlaySudokuActivity : AppCompatActivity(), SudokuBoardView.onTouchListener 
             viewModel.sudokuGame.updateCellNum(0)
         }
 
+        buttonUndo.setOnClickListener {
+            viewModel.sudokuGame.undoMove()
+        }
+
         buttonHint.setOnClickListener {
             viewModel.sudokuGame.fillHint()
         }

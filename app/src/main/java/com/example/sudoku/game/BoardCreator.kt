@@ -48,7 +48,7 @@ class BoardCreator(private val sqrtSize: Int, private val board: Board) {
         // Step 2: Create a random, valid solution to the board
         println("Creating solution...")
         board.initialiseBoard(grid, removed)
-        board.fillAllNotes()
+        board.fillAllNotes(true)
         backtrackSolve(false)
         // Copy full board to grid. Set board expected value
         for (r in 0 until size) {
@@ -65,7 +65,7 @@ class BoardCreator(private val sqrtSize: Int, private val board: Board) {
             1 -> 48 // Medium
             2 -> 52 // Hard
             3 -> 56 // Extreme
-            else -> 58 // Expert
+            else -> 56 // Expert
         }
 
         if (!removeSquares(n)) {
@@ -76,8 +76,8 @@ class BoardCreator(private val sqrtSize: Int, private val board: Board) {
 
         // Step 4: Ready board for play
         println("Preparing for play...")
-        board.initialiseBoard(grid, removed)
         board.clearNotes()
+        board.initialiseBoard(grid, removed)
     }
 
     /* Board creation functions */
@@ -87,7 +87,7 @@ class BoardCreator(private val sqrtSize: Int, private val board: Board) {
     // Set limit to false to allow an unlimited number of valid solutions.
     private fun backtrackSolve(limit: Boolean = true): Int {
         // Step 1: Find cell with lowest note count
-        board.fillAllNotes()
+        board.fillAllNotes(false)
         var row = -1
         var col = -1
         var low = MAX_VALUE
@@ -125,7 +125,8 @@ class BoardCreator(private val sqrtSize: Int, private val board: Board) {
             if (sols == 1 && !limit) return 1
 
             // Reset board value
-            board.updateCell(row, col, 0, false)
+            board.updateCell(row, col, it, false)
+            board.clearMoveStack()
 
             if (sols > 1) return sols
         }

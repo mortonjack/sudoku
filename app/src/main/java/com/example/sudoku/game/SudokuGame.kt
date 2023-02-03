@@ -44,7 +44,7 @@ class SudokuGame(sqrtSize: Int) {
 
     // Fill all possible notes
     fun fillAllNotes() {
-        board.fillAllNotes()
+        board.fillAllNotes(true)
         boardLiveData.postValue(board)
     }
 
@@ -52,6 +52,12 @@ class SudokuGame(sqrtSize: Int) {
     fun fillHint() {
         println("Filling in hint")
         println("Move type: ${boardCreator.humanMove(true)}")
+        boardLiveData.postValue(board)
+    }
+
+    // Undo move
+    fun undoMove() {
+        board.undo()
         boardLiveData.postValue(board)
     }
 

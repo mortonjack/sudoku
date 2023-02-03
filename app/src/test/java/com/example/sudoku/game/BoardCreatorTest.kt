@@ -22,7 +22,7 @@ internal class BoardCreatorTest {
         assert(grid[8][8] == 9)
         board.initialiseBoard(grid, removed)
         assert(board.cellValue(8, 8) != 9)
-        board.fillAllNotes()
+        board.fillAllNotes(true)
 
         val boardCreator = BoardCreator(3, board)
         assert(boardCreator.humanMove(true) == 1)
