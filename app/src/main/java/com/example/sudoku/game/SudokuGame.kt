@@ -19,7 +19,9 @@ class SudokuGame(sqrtSize: Int, difficulty: Int) {
         println("Initialising SudokuGame")
         selectedCellLiveData.postValue(Pair(selectedRow, selectedCol))
         boardCreator.makeBoard(difficulty)
+        println("Posting live data")
         boardLiveData.postValue(board)
+        println("SudokuGame initialised")
     }
 
     // Update cell number

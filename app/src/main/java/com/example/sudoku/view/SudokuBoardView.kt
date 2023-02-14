@@ -17,12 +17,12 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
     private var colourMode = 0
 
     // Board size
-    private var size = 9;
+    private var size = 9
     private var sqrtSize = sqrt(size.toDouble()).toInt()
 
     // These values are set in onDraw. They note the size in pixels of cells & text
-    private var cellSizePixels = 0F;
-    private var textSizePixels = 0F;
+    private var cellSizePixels = 0F
+    private var textSizePixels = 0F
 
     // Player selection
     private var selectedRow = -1
@@ -33,7 +33,7 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
     // Board
     private var board: Board? = null
 
-    private var listener: SudokuBoardView.onTouchListener? = null
+    private var listener: onTouchListener? = null
 
     /* PAINT STYLES */
 
@@ -132,15 +132,20 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
         updatePixelMeasurements(width.coerceAtMost(height))
 
         // Update selected num
+        println("Updating selected num")
         if (board != null && selectedRow != -1 && selectedCol != -1) {
             selectedNum = board!!.cellValue(selectedRow, selectedCol)
         }
 
         // Draw cell highlights
+        println("Drawing cell highlights")
         fillAllCells(canvas)
         // Draw grid & text OVER highlights
+        println("Drawing nums")
         drawNums(canvas)
+        println("Drawing lines")
         drawLines(canvas)
+        println("Finished drawing")
     }
 
     // Select cell when player touches it
@@ -279,7 +284,7 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
     private fun drawNums(canvas: Canvas) {
         for (r in 0 until size) {
             for (c in 0 until size) {
-                var num = board!!.cellValue(r, c)
+                val num = board?.cellValue(r, c) ?: return
                 if (num <= 0 || num > size) {
                     // Draw notes instead
                     drawNotes(canvas, r, c)
