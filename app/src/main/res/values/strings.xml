@@ -14,4 +14,11 @@
     <string name="undo">Undo</string>
     <string name="fill_notes">Fill Notes</string>
     <string name="hint">Hint</string>
+    <string name="title">Sudoku</string>
+    <string name="new_game">Start New Game</string>
+    <string name="load_game">Continue</string>
+    <string name="easy">Easy</string>
+    <string name="medium">Medium</string>
+    <string name="hard">Hard</string>
+    <string name="extreme">Extreme</string>
 </resources>

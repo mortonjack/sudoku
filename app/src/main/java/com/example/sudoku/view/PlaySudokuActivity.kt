@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.sudoku.R
 import com.example.sudoku.game.Board
 import com.example.sudoku.viewmodel.PlaySudokuViewModel
+import com.example.sudoku.viewmodel.PlaySudokuViewModelFactory
 import kotlinx.android.synthetic.main.sudoku_activity.*
 
 class PlaySudokuActivity : AppCompatActivity(), SudokuBoardView.onTouchListener {
@@ -25,7 +26,8 @@ class PlaySudokuActivity : AppCompatActivity(), SudokuBoardView.onTouchListener 
         sudokuBoardView.registerListener(this)
 
         // Get view model for this activity
-        viewModel = ViewModelProvider(this).get(PlaySudokuViewModel::class.java)
+        val difficulty = intent.getIntExtra("difficulty", 0)
+        viewModel = ViewModelProvider(this, PlaySudokuViewModelFactory(difficulty)).get(PlaySudokuViewModel::class.java)
         // Observe selectedCellLiveData for updates. Call updateSelectedCellUI when it updates.
         viewModel.sudokuGame.selectedCellLiveData.observe(this, Observer{ updateSelectedCellUI(it)})
         viewModel.sudokuGame.boardLiveData.observe(this, Observer{ updateBoard(it) })

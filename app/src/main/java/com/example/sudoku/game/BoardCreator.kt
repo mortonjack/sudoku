@@ -62,10 +62,10 @@ class BoardCreator(private val sqrtSize: Int, private val board: Board) {
         // Step 3: Remove squares from grid based off difficulty
         val n = when (difficulty) {
             0 -> 42 // Easy
-            1 -> 48 // Medium
-            2 -> 52 // Hard
-            3 -> 56 // Extreme
-            else -> 56 // Expert
+            1 -> 46 // Medium
+            2 -> 50 // Hard
+            3 -> 54 // Extreme
+            else -> 54 // Expert
         }
 
         if (!removeSquares(n)) {
