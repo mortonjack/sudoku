@@ -131,6 +131,11 @@ class Board(private val sqrtSize: Int, private val size: Int = sqrtSize*sqrtSize
         grid[row][col].expectedValue = grid[row][col].value
     }
 
+    fun expectedValue(row: Int, col: Int): Int {
+        if (row < 0 || col < 0 || row >= size || col >= size) return -1
+        return grid[row][col].expectedValue
+    }
+
     // Undo previous move
     fun undo() {
         //println("Undoing most recent move...")

@@ -132,20 +132,15 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
         updatePixelMeasurements(width.coerceAtMost(height))
 
         // Update selected num
-        println("Updating selected num")
         if (board != null && selectedRow != -1 && selectedCol != -1) {
             selectedNum = board!!.cellValue(selectedRow, selectedCol)
         }
 
         // Draw cell highlights
-        println("Drawing cell highlights")
         fillAllCells(canvas)
         // Draw grid & text OVER highlights
-        println("Drawing nums")
         drawNums(canvas)
-        println("Drawing lines")
         drawLines(canvas)
-        println("Finished drawing")
     }
 
     // Select cell when player touches it
@@ -216,7 +211,7 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
 
         if (board == null) return
 
-        // Paint individual cells - Loop over board!
+        // Highlight connected/conflicting cells!
         if (selectedNum in 1 .. size) {
             for (r in 0 until size) {
                 for (c in 0 until size) {
@@ -235,6 +230,17 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
                         // Highlight non-conflicting cells with same num
                         else fillCell(canvas, r, c, highlightCellPaint)
                     }
+                }
+            }
+        }
+
+        // Paint individual cells which are WRONG
+        for (r in 0 until size) {
+            for (c in 0 until size) {
+                val cellValue = board!!.cellValue(r, c)
+                // Check if cell value conflicts with expected value
+                if (cellValue > 0 && cellValue != board!!.expectedValue(r, c)) {
+                    fillCell(canvas, r, c, conflictingCellPaint)
                 }
             }
         }
