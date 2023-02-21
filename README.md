@@ -11,13 +11,13 @@ This app is intended to be a fully-playable sudoku app. It will auto-generate a 
 - Board validity check
 - Auto-fill notes
 - Auto-delete notes (always on)
+- User-selected difficulty
+- Menu screen
+- Undo button
 
 # Future features
 - Win screen
-- User-selected difficulty
 - More human difficulty levels
-- Menu screen
-- Undo button
 - Dark mode
 - Timer? 
 - Stats?
