@@ -6,18 +6,22 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-<androidx.appcompat.widget.Toolbar
-    android:id="@+id/sudokuToolbar"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:elevation="4dp"
-    android:minHeight="?attr/actionBarSize"/>
-
 <androidx.constraintlayout.widget.ConstraintLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="4dp"
     tools:context=".view.PlaySudokuActivity">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/sudokuToolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:elevation="4dp"
+        android:minHeight="?attr/actionBarSize"
+        app:layout_constraintBottom_toTopOf="@id/sudokuBoardView"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
 
     <com.example.sudoku.view.SudokuBoardView
         android:id="@+id/sudokuBoardView"
@@ -26,7 +30,7 @@
         app:layout_constraintBottom_toTopOf="@id/toolsGrid"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/sudokuToolbar"
         app:layout_constraintDimensionRatio="1:1"/>
 
     <GridLayout
