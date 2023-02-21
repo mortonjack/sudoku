@@ -34,7 +34,6 @@ class BoardCreator(private val sqrtSize: Int, private val board: Board) {
         // 1 0 0
         // 0 1 0 <-- 1s represent boxes to fill in
         // 0 0 1
-        println("Filling in board...")
         for (box in 0 until sqrtSize) {
             val fill = (1..size).shuffled()
             var i = 0
@@ -46,7 +45,6 @@ class BoardCreator(private val sqrtSize: Int, private val board: Board) {
         }
 
         // Step 2: Create a random, valid solution to the board
-        println("Creating solution...")
         board.initialiseBoard(grid, removed)
         board.fillAllNotes(true)
         backtrackSolve(false)
@@ -58,7 +56,6 @@ class BoardCreator(private val sqrtSize: Int, private val board: Board) {
             }
         }
 
-        println("Removing squares...")
         // Step 3: Remove squares from grid based off difficulty
         val n = when (difficulty) {
             0 -> 42 // Easy
@@ -69,13 +66,11 @@ class BoardCreator(private val sqrtSize: Int, private val board: Board) {
         }
 
         if (!removeSquares(n)) {
-            println("ERROR: FAILED TO REMOVE SQUARES")
             makeBoard(difficulty)
             return
         }
 
         // Step 4: Ready board for play
-        println("Preparing for play...")
         board.clearNotes()
         board.initialiseBoard(grid, removed)
     }
@@ -208,19 +203,15 @@ class BoardCreator(private val sqrtSize: Int, private val board: Board) {
         }
 
         // Single candidate or Single position
-        println("Attempt single candidate/position")
         if (singleCandidateOrPosition(fill)) return 1
 
         // Candidate lines - A block has notes in only 1 line, notes exist elsewhere in line
-        println("Attempt candidate lines")
         if (candidateLines(fill)) return 2
 
         // Double pairs - 2 blocks have pairs across only 2 lines, notes exist elsewhere in lines
-        println("Attempt double pairs")
         if (doublePairs(fill)) return 3
 
         // Multiple lines
-        println("Attempt multiple lines")
 
         // Naked pair
 
@@ -256,7 +247,6 @@ class BoardCreator(private val sqrtSize: Int, private val board: Board) {
 
     // Fill single position (only 1 position in row/col/block with this note)
     private fun fillSinglePosition(type: Char, index: Int, num: Int) {
-        println("Filling type $type")
         when (type) {
             'r' -> { // Row
                 for (c in 0 until size) {
@@ -344,7 +334,6 @@ class BoardCreator(private val sqrtSize: Int, private val board: Board) {
                 }
             }
         }
-        if (found) println("Filling candidate lines, block ${block+1}, ${if (isRow) "row" else "col"} ${index+1}, num $num")
         return found
     }
 
@@ -377,7 +366,6 @@ class BoardCreator(private val sqrtSize: Int, private val board: Board) {
 
     // Fill double pairs
     private fun fillDoublePairs(block: Int, num: Int, isRow: Boolean) {
-        println("Filling doubles pairs of $num in block ${block+1} across ${if (isRow) "rows" else "cols"}")
         if (isRow) {
             val b = if (block % sqrtSize == 0) block+1 else block-1
             val r = if (blockRowNoteCount[b][0][num] == 0) blockRow(0, block)

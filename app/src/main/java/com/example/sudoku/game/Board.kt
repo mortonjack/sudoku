@@ -144,7 +144,6 @@ class Board(private val sqrtSize: Int, private val size: Int = sqrtSize*sqrtSize
 
     // Undo previous move
     fun undo() {
-        //println("Undoing most recent move...")
         // Return early if no move to undo
         if (moves.isEmpty()) return
 
@@ -155,7 +154,6 @@ class Board(private val sqrtSize: Int, private val size: Int = sqrtSize*sqrtSize
         // Update previous move
         if (prev.row != -1) updateCell(prev.row, prev.col, prev.num, prev.note)
         else moves.add(Move(-1, -1, 0, false))
-        //println("${prev.row}, ${prev.col}, ${prev.num}, ${if (prev.note) "note" else "num"} ")
 
         // Update notes too
         while (!prev.notes.isEmpty()) {

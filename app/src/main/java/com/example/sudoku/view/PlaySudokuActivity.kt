@@ -96,7 +96,6 @@ class PlaySudokuActivity : AppCompatActivity(), SudokuBoardView.onTouchListener 
                     }
 
                     builder.show()
-                    println("Should win - does this work?")
                 }
             }
         }

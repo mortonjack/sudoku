@@ -16,12 +16,9 @@ class SudokuGame(sqrtSize: Int, difficulty: Int) {
     private val boardCreator = BoardCreator(sqrtSize, board)
 
     init {
-        println("Initialising SudokuGame")
         selectedCellLiveData.postValue(Pair(selectedRow, selectedCol))
         boardCreator.makeBoard(difficulty)
-        println("Posting live data")
         boardLiveData.postValue(board)
-        println("SudokuGame initialised")
     }
 
     // Check if won
@@ -62,8 +59,6 @@ class SudokuGame(sqrtSize: Int, difficulty: Int) {
 
     // Fill hint
     fun fillHint() {
-        println("Filling in hint")
-        println("Move type: ${boardCreator.humanMove(true)}")
         boardLiveData.postValue(board)
     }
 

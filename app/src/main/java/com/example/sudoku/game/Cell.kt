@@ -33,7 +33,6 @@ class Cell(private val size: Int, var starting: Boolean = false) {
         // Change number if cell isn't starting cell
         if (!starting) {
             value = num
-            // TODO: Error-stuff if val != expected val
         }
     }
 }

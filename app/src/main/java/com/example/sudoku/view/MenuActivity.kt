@@ -11,7 +11,6 @@ class MenuActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        println("CREATING MENU")
         setContentView(R.layout.menu_activity)
 
         /*continueGameButton.setOnClickListener {
