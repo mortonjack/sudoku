@@ -38,6 +38,13 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
 
     /* PAINT STYLES */
 
+    // Style for outline
+    private val outlinePaint = Paint().apply {
+        style = Paint.Style.STROKE
+        color = ContextCompat.getColor(context, R.color.colorThickLine)
+        strokeWidth = 18F
+    }
+
     // Style for thick lines
     private val thickLinePaint = Paint().apply {
         style = Paint.Style.STROKE
@@ -242,7 +249,7 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
     // Draw board grid
     private fun drawLines(canvas: Canvas) {
         // Draw outline
-        canvas.drawRect(0F, 0F, width.toFloat(), height.toFloat(), thickLinePaint)
+        canvas.drawRect(0F, 0F, width.toFloat(), height.toFloat(), outlinePaint)
 
         for (i in 1 until size) {
             // In Kotlin, 'if' and 'when' (aka 'switch') statements are expressions
@@ -335,7 +342,7 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
         invalidate() // redraw board view
     }
 
-    fun registerListener(listener: SudokuBoardView.onTouchListener) {
+    fun registerListener(listener: onTouchListener) {
         this.listener = listener
     }
 
