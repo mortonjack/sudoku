@@ -8,13 +8,14 @@ import android.graphics.Rect
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
+import android.widget.PopupMenu
+import androidx.core.content.ContextCompat
+import com.example.sudoku.R
 import com.example.sudoku.game.Board
+import kotlinx.android.synthetic.main.sudoku_activity.view.*
 import kotlin.math.sqrt
 
 class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(context, attributeSet) {
-
-    // Select color mode (Default: 0, Dark mode: 1, more can be added!)
-    private var colourMode = 0
 
     // Board size
     private var size = 9
@@ -40,79 +41,59 @@ class SudokuBoardView(context: Context, attributeSet: AttributeSet) : View(conte
     // Style for thick lines
     private val thickLinePaint = Paint().apply {
         style = Paint.Style.STROKE
-        color = when (colourMode) {
-            1 -> Color.RED
-            else -> Color.BLACK
-        }
+        color = ContextCompat.getColor(context, R.color.colorThickLine)
         strokeWidth = 9F
     }
 
     // Style for thin lines
     private val thinLinePaint = Paint().apply {
         style = Paint.Style.STROKE
-        color = when (colourMode) {
-            1 -> Color.RED
-            else -> Color.BLACK
-        }
+        color = ContextCompat.getColor(context, R.color.colorThickLine)
         strokeWidth = 3F
     }
 
     // Selected cell paint
     private val selectedCellPaint = Paint().apply {
         style = Paint.Style.FILL_AND_STROKE
-        color = when (colourMode) {
-            else -> Color.parseColor("#f9fcae")
-        }
+        color = ContextCompat.getColor(context, R.color.colorSelectedCell)
     }
 
     // Same row/col/block cell paint. Unsure on a good name here!
     private val adjacentCellPaint = Paint().apply {
         style = Paint.Style.FILL_AND_STROKE
-        color = when (colourMode) {
-            else -> Color.parseColor("#aedffc")
-        }
+        color = ContextCompat.getColor(context, R.color.colorAdjacentCell)
     }
 
     // Highlighted cell paint
     private val highlightCellPaint = Paint().apply {
         style = Paint.Style.FILL_AND_STROKE
-        color = when (colourMode) {
-            else -> Color.parseColor("#aefcb3")
-        }
+        color = ContextCompat.getColor(context, R.color.colorHighlightCell)
     }
 
     // Conflicting cell paint
     private val conflictingCellPaint = Paint().apply {
         style = Paint.Style.FILL_AND_STROKE
-        color = when (colourMode) {
-            else -> Color.parseColor("#fcb3ae")
-        }
+        color = ContextCompat.getColor(context, R.color.colorConflictCell)
     }
 
     // Starting number paint
     private val startPaint = Paint().apply {
         style = Paint.Style.FILL_AND_STROKE
-        color = when (colourMode) {
-            else -> Color.parseColor("#000000")
-        }
+        color = ContextCompat.getColor(context, R.color.colorStartNum)
         textSize = 0F
     }
 
     // Filled-in number paint
     private val numPaint = Paint().apply {
         style = Paint.Style.FILL_AND_STROKE
-        color = when (colourMode) {
-            else -> Color.parseColor("#0000FF")
-        }
+        color = ContextCompat.getColor(context, R.color.colorPlayerNum)
         textSize = 0F
     }
 
     // Note paint
     private val notePaint = Paint().apply {
         style = Paint.Style.FILL_AND_STROKE
-        color = when (colourMode) {
-            else -> Color.parseColor("#aaaaaa")
-        }
+        color = ContextCompat.getColor(context, R.color.colorNote)
         textSize = 0F
     }
 

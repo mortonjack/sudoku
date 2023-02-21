@@ -7,6 +7,8 @@ import android.graphics.Paint
 import android.graphics.Rect
 import android.util.AttributeSet
 import android.view.View
+import androidx.core.content.ContextCompat
+import com.example.sudoku.R
 
 class MenuTitleView(context: Context, attributeSet: AttributeSet) : View(context, attributeSet) {
 
@@ -15,9 +17,7 @@ class MenuTitleView(context: Context, attributeSet: AttributeSet) : View(context
 
     private val textPaint = Paint().apply {
         style = Paint.Style.FILL_AND_STROKE
-        color = when (colourMode) {
-            else -> Color.parseColor("#000000")
-        }
+        color = ContextCompat.getColor(context, R.color.colorStartNum)
         textSize = 0F
     }
 

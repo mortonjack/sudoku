@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorThickLine">#CFCFCF</color>
+    <color name="colorSelectedCell">#FFD772</color>
+    <color name="colorAdjacentCell">#77A5C1</color>
+    <color name="colorHighlightCell">#72C85F</color>
+    <color name="colorConflictCell">#FF827B</color>
+    <color name="colorStartNum">#FFFFFF</color>
+    <color name="colorPlayerNum">#5F5FFF</color>
+    <color name="colorNote">#6E6E6E</color>
+    <color name="button">#000000</color>
+</resources>

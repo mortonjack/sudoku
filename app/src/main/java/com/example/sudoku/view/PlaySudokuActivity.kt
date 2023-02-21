@@ -3,6 +3,11 @@ package com.example.sudoku.view
 import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.MenuItem
+import android.widget.PopupWindow
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.widget.Toolbar
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.sudoku.R
@@ -32,6 +37,24 @@ class PlaySudokuActivity : AppCompatActivity(), SudokuBoardView.onTouchListener 
         viewModel.sudokuGame.selectedCellLiveData.observe(this, Observer{ updateSelectedCellUI(it)})
         viewModel.sudokuGame.boardLiveData.observe(this, Observer{ updateBoard(it) })
 
+        // Get the toolbar view from the layout resource file
+        val toolbar = findViewById<Toolbar>(R.id.sudokuToolbar)
+
+        // Set the toolbar as the action bar for the activity
+        setSupportActionBar(toolbar)
+
+        // Customize the toolbar
+        supportActionBar?.apply {
+            title = "Sudoku - ${when (difficulty) {
+                0 -> "Easy"
+                1 -> "Medium"
+                2 -> "Hard"
+                3 -> "Extreme"
+                else -> "(Secret) Expert"
+            }}"
+            setDisplayHomeAsUpEnabled(true)
+        }
+
         // Call "Update cell num" for respective number when a button is pushed
         // I wish I could find a less annoying way to do this!
         val buttons = listOf(buttonOne, buttonTwo, buttonThree, buttonFour, buttonFive, buttonSix,
@@ -60,9 +83,36 @@ class PlaySudokuActivity : AppCompatActivity(), SudokuBoardView.onTouchListener 
         buttons.forEachIndexed {i, button ->
             button.setOnClickListener {
                 viewModel.sudokuGame.updateCellNum(i+1)
+                if (viewModel.sudokuGame.won()) {
+                    val popup = PopupWindow(this)
+                    val view = layoutInflater.inflate(R.layout.win_screen, null)
+                    popup.contentView = view
+                    println("Should win - does this work?")
+                }
             }
         }
     }
+
+    override fun onBackPressed() {
+        val builder = AlertDialog.Builder(this)
+        builder.setMessage("Are you sure you want to give up?")
+            .setCancelable(false)
+            .setPositiveButton("Yes") { _, _ -> super.onBackPressed() }
+            .setNegativeButton("No, take me back!") { dialog, _ -> dialog.cancel() }
+        val alert = builder.create()
+        alert.show()
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            android.R.id.home -> {
+                onBackPressed()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
 
     // Reminder: ? means it can take the value null. cell?.let means it only runs if cell isn't null
     private fun updateSelectedCellUI(cell: Pair<Int, Int>?) = cell?.let {
@@ -79,7 +129,7 @@ class PlaySudokuActivity : AppCompatActivity(), SudokuBoardView.onTouchListener 
         if (viewModel.sudokuGame.note) {
             buttonNote.setTextColor(Color.parseColor("#f2d65c"))
         } else {
-            buttonNote.setTextColor(Color.parseColor("#ffffff"))
+            buttonNote.setTextColor(ContextCompat.getColor(this, R.color.button))
         }
     }
 

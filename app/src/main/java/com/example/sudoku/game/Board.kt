@@ -6,13 +6,17 @@ class Board(private val sqrtSize: Int, private val size: Int = sqrtSize*sqrtSize
     private val grid = List(size) { List(size) { Cell(size)} }
     private val moves: Deque<Move> = LinkedList()
     private val maxMovesSize = 500
+    var incorrect = size*size
+    var won = false
 
     fun initialiseBoard(start: Array<Array<Int>>, removed: Array<BooleanArray>) {
+        incorrect = size*size
         for (r in 0 until size) {
             for (c in 0 until size) {
                 if (start[r][c] != 0 && !removed[r][c]) {
                     grid[r][c].changeVal(start[r][c])
                     grid[r][c].starting = true
+                    incorrect--
                 } else {
                     grid[r][c].starting = false
                     grid[r][c].changeVal(0)
@@ -38,9 +42,11 @@ class Board(private val sqrtSize: Int, private val size: Int = sqrtSize*sqrtSize
 
         // Update cell values
         if (note) grid[row][col].flipNote(num)
-        else {
+        else if (num != cellValue(row, col)) {
             // Clear all notes from cell
             updateCell(row, col, 0, true, connected = true)
+            if (num == expectedValue(row, col)) incorrect--
+            else if (cellValue(row, col) == expectedValue(row, col)) incorrect++
             grid[row][col].changeVal(num)
             // Remove note from row/col
             for (i in 0 until size) {

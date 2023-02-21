@@ -24,9 +24,19 @@ class SudokuGame(sqrtSize: Int, difficulty: Int) {
         println("SudokuGame initialised")
     }
 
+    // Check if won
+    fun won(): Boolean {
+        if (!board.won && board.incorrect == 0) {
+            board.won = true
+            return true
+        }
+        return false
+    }
+
     // Update cell number
     fun updateCellNum(num: Int) {
         if (selectedRow == -1 || selectedCol == -1) return
+        if (!note && board.cellValue(selectedRow, selectedCol) == num) return
         board.updateCell(selectedRow, selectedCol, num, note)
         boardLiveData.postValue(board)
     }
