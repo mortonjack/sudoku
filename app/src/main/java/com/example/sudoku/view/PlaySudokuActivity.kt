@@ -3,6 +3,7 @@ package com.example.sudoku.view
 import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.MenuItem
 import android.widget.PopupWindow
 import androidx.appcompat.app.AlertDialog
@@ -84,9 +85,17 @@ class PlaySudokuActivity : AppCompatActivity(), SudokuBoardView.onTouchListener 
             button.setOnClickListener {
                 viewModel.sudokuGame.updateCellNum(i+1)
                 if (viewModel.sudokuGame.won()) {
-                    val popup = PopupWindow(this)
-                    val view = layoutInflater.inflate(R.layout.win_screen, null)
-                    popup.contentView = view
+                    val builder = AlertDialog.Builder(this)
+                    builder.setMessage("You win!")
+                    builder.setPositiveButton("Analyse Game") { _, _ ->
+                        // Do something when win
+                    }
+                    builder.setNegativeButton("Exit") { _, _ ->
+                        // Go back
+                        super.onBackPressed()
+                    }
+
+                    builder.show()
                     println("Should win - does this work?")
                 }
             }
@@ -95,7 +104,7 @@ class PlaySudokuActivity : AppCompatActivity(), SudokuBoardView.onTouchListener 
 
     override fun onBackPressed() {
         val builder = AlertDialog.Builder(this)
-        builder.setMessage("Are you sure you want to give up?")
+        builder.setMessage("Are you sure you want to quit?")
             .setCancelable(false)
             .setPositiveButton("Yes") { _, _ -> super.onBackPressed() }
             .setNegativeButton("No, take me back!") { dialog, _ -> dialog.cancel() }
